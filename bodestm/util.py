@@ -6,13 +6,10 @@ from collections import defaultdict
 import tensorflow as tf
 import glob
 import numpy as np
-import gitignored.remap as remap
 
 
 def bytes_feature(value):
     """Returns a bytes_list from a string / byte."""
-    if isinstance(value, type(tf.constant(0))):
-        value = value.numpy()
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 
@@ -86,28 +83,6 @@ def parse_tfrecord(record):
     return image, parsed["int_label"]
 
 
-def load_classification(path_to_classification):
-    df = pd.read_csv(path_to_classification, names=["file_name", "label"], delimiter="\t", header=None, dtype=str)
-    df["label"] = df["label"].astype(int)
-
-    df.insert(len(df.columns), "generated", False)
-
-    measurement_series = []
-    for file_name in df["file_name"]:
-        measurement_series.append(
-            "{}_{}_{}".format(file_name.split("_")[0], file_name.split("_")[1], file_name.split("_")[2]))
-
-    measurement_index = []
-    for file_name in df["file_name"]:
-        measurement_index.append(file_name.split("_")[-1].split(".")[0])
-
-    df["measurement_series"] = measurement_series
-    df["measurement_index"] = measurement_index
-    df["measurement_index"] = df["measurement_index"].astype(int)
-
-    return df
-
-
 def split_data_set_in_train_and_eval(df, n_examples_per_class):
     dfs_train, dfs_eval = [], []
 
@@ -123,10 +98,7 @@ def split_data_set_in_train_and_eval(df, n_examples_per_class):
     df_train = pd.concat(dfs_train).sample(frac=1)
     df_eval = pd.concat(dfs_eval).sample(frac=1)
 
-    del dfs_train
-    del dfs_eval
-
-    return df_train.sort_index(), df_eval.sort_index()
+    return df_train, df_eval
 
 def gen_filenames(content_of_inputfolder):
     for filename in content_of_inputfolder:
@@ -151,17 +123,41 @@ def get_classification_df(classification_files):
         df_buf = pd.read_csv(classification_file, names=["file_path", "ext_label", "ignore"], delimiter="\t", header=None, dtype=str)
         # get folder name for classification file
         folder_name = classification_file.split(".")[0]
-        file_path_buf = []
-        for file_path in df_buf.file_path:
-            file_path_buf.append("{}/{}".format(folder_name, file_path))
-        df_buf.file_path = file_path_buf
+        df_buf["file_path"] = df_buf["file_path"].map(lambda file_path: "{}/{}".format(folder_name, file_path))
         df_buf = df_buf.drop(columns=["ignore"])
-        df_buf.ext_label = df_buf.ext_label.astype("int")
+        df_buf["ext_label"] = df_buf.ext_label.astype("int")
 
         dfs.append(df_buf)
         
     df = pd.concat(dfs, ignore_index=True)
-    df["int_label"] = remap.remap_cross(df.ext_label)
+    df["int_label"] = remap_cross(df["ext_label"])
         
     return df
+
+LABEL_REMAPPING = {
+    0: 0,
+    1: 1,
+    3: 2,
+    4: 3,
+    5: 4,
+    6: 5,
+}
+
+LABEL_REMAPPING_REVERSE = {target: src for src, target in LABEL_REMAPPING.items()}
+
+def remap_cross(s):
+    s_remap = s.copy()
+    for i in range(len(s_remap.values)):
+        element = s_remap.values[i]
+        s_remap[i] = LABEL_REMAPPING[element]
+    
+    return s_remap
+    
+def remap_cross_back(s):
+    s_remap = s.copy()
+    for i in range(len(s_remap)):
+        element = s_remap.values[i]
+        s_remap[i] = LABEL_REMAPPING_REVERSE[element]
+    
+    return s_remap
     
