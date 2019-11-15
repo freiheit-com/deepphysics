@@ -37,7 +37,7 @@ We used an evaluation data set that contained 50 examples per class. With the da
 <table style="width:50%">
   <tr>
     <th>class</th>
-    <th>accuracy</th>
+    <th>precision</th>
   </tr>
   <tr>
     <td>1</td>
@@ -86,7 +86,7 @@ You are seeking for new challenges in Software Development or Solid-State Physic
 
 ## Contribution
 
-The project’s source code is free software - free as in freedom and not as in free beer (MIT license). Contributions are welcome and we are open to questions and new exciting projects. Feel free to contact us at finn.christiansen@freiheit.com.
+The project’s source code is free software - free as in freedom and not as in free beer (MIT license). Contributions are welcome and we are open to questions and new exciting projects. Feel free to contact us at vladimir.kravtsov@freiheit.com.
 
 ## Credits
 
@@ -94,7 +94,6 @@ This project is a collaboration between the physics research group of Prof. Dr. 
 
 ### freiheit.com
 
-- [Finn Christiansen](https://www.xing.com/profile/Finn_Christiansen3/) has initiated the project, is the communication leader and a core contributor.
 - [Vladimir Kravtsov](https://github.com/vladhc) has implemented the initial proof of concept and is a core contributor.
 - [Rasmus Buchmann](github.com/rbuchmann) supports the project as a advisor.
 - [Stefan Richter](https://www.linkedin.com/in/smartrevolution/) is the founder and CTO of freiheit.com. He is enthusiastic about the possibilities of AI, pushing AI projects  and provides company time as well as computing resources.
@@ -107,4 +106,5 @@ This project is a collaboration between the physics research group of Prof. Dr. 
 
 ### Extern
 
-- [Dr. Daniel Bartz](https://www.linkedin.com/in/bartzdaniel/) supports the project by reviewing code & analyses, refactoring and providing advice.
+- [Finn Christiansen](https://www.xing.com/profile/Finn_Christiansen3/) has initiated the project, was the communication leader and a core contributor.
+- [Dr. Daniel Bartz](https://www.linkedin.com/in/bartzdaniel/) supported the project by reviewing code & analyses, refactoring and providing advice.
